@@ -3,14 +3,39 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:BlockPuzzle.ViewModels"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+			 xmlns:models="clr-namespace:BlockPuzzle.Models"
+             mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="900"
              x:Class="BlockPuzzle.Views.MainView"
              x:DataType="vm:MainViewModel">
-  <Design.DataContext>
-    <!-- This only sets the DataContext for the previewer in an IDE,
-         to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-    <vm:MainViewModel />
-  </Design.DataContext>
+	<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+		<StackPanel Orientation="Horizontal">
+			<TextBlock Text="Current Score" Margin="10"/>
+			<TextBlock Text="Icon" Margin="10"/>
+			<TextBlock Text="Before Score" Margin="10"/>
+		</StackPanel>
+		<ItemsControl ItemsSource="{Binding Cells}">
+			<ItemsControl.ItemTemplate>
+				<DataTemplate>
+					<Image	Grid.Row="{Binding X}"
+							Grid.Column="{Binding Y}"
+							Margin="1"
+							Height="32"
+							Width="32"
+							Source="avares://BlockPuzzle/Assets/Tile.png"/>
+				</DataTemplate>
+			</ItemsControl.ItemTemplate>
 
-  <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+			<ItemsControl.ItemsPanel>
+				<ItemsPanelTemplate>
+					<UniformGrid Columns="8" Margin="10"/>
+				</ItemsPanelTemplate>
+			</ItemsControl.ItemsPanel>
+		</ItemsControl>
+
+		<StackPanel Orientation="Horizontal">
+			<TextBlock Text="Block" Margin="10"/>
+			<TextBlock Text="Block" Margin="10"/>
+			<TextBlock Text="Block" Margin="10"/>
+		</StackPanel>
+	</StackPanel>
 </UserControl>
