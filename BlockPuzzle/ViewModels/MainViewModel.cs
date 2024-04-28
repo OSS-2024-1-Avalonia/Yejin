@@ -17,7 +17,7 @@ namespace BlockPuzzle.ViewModels
             {
                 for (var j = 0; j < Size; j++)
                 {
-                    cells.Add(new Cell { X = i, Y = j, Value = $"{i},{j}" });
+                    cells.Add(new Cell { X = i, Y = j });
                 }
             }
 
