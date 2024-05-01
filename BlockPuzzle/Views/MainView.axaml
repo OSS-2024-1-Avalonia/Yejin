@@ -13,11 +13,11 @@
 			<TextBlock Text="Icon" Margin="10"/>
 			<TextBlock Text="Before Score" Margin="10"/>
 		</StackPanel>
-		<ItemsControl ItemsSource="{Binding Cells}">
+		<ItemsControl ItemsSource="{CompiledBinding BoardCells}">
 			<ItemsControl.ItemTemplate>
 				<DataTemplate>
-					<Image	Grid.Row="{Binding X}"
-							Grid.Column="{Binding Y}"
+					<Image	Grid.Row="{CompiledBinding X}"
+							Grid.Column="{CompiledBinding Y}"
 							Margin="1"
 							Height="32"
 							Width="32"
@@ -32,10 +32,38 @@
 			</ItemsControl.ItemsPanel>
 		</ItemsControl>
 
-		<StackPanel Orientation="Horizontal">
-			<TextBlock Text="Block" Margin="10"/>
-			<TextBlock Text="Block" Margin="10"/>
-			<TextBlock Text="Block" Margin="10"/>
-		</StackPanel>
+		
+		<ItemsControl ItemsSource="{CompiledBinding Blocks}">
+			<ItemsControl.ItemsPanel>
+				<ItemsPanelTemplate>
+					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center"/>
+				</ItemsPanelTemplate>
+			</ItemsControl.ItemsPanel>
+			
+			<ItemsControl.ItemTemplate>
+				<DataTemplate>
+					<ItemsControl ItemsSource="{CompiledBinding Cells}">
+						<ItemsControl.ItemTemplate>
+							<DataTemplate>
+								<Image	Grid.Row="{CompiledBinding X}"
+										Grid.Column="{CompiledBinding Y}"
+										Margin="1"
+										Height="16"
+										Width="16"
+										Source="avares://BlockPuzzle/Assets/Block.png"
+										Visual.IsVisible ="{CompiledBinding IsVisible}"/>
+							</DataTemplate>
+						</ItemsControl.ItemTemplate>
+
+						<ItemsControl.ItemsPanel>
+							<ItemsPanelTemplate>
+								<UniformGrid Columns="{CompiledBinding Size}" Margin="10"/>
+								<!-- <UniformGrid Columns="{CompiledBinding $parent.((vm:MainViewModel)DataContext).MaxSize}" Margin="10"/> -->
+							</ItemsPanelTemplate>
+						</ItemsControl.ItemsPanel>
+					</ItemsControl>
+				</DataTemplate>
+			</ItemsControl.ItemTemplate>
+		</ItemsControl>
 	</StackPanel>
 </UserControl>
