@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 
 namespace BlockPuzzle.Models
 {
@@ -52,9 +51,10 @@ namespace BlockPuzzle.Models
         {
             int[] indices = new int[3];
             int count = 0;
+            var random = new Random();
             while (count < 3)
             {
-                var index = RandomNumberGenerator.GetInt32(Blocks.Count);
+                var index = random.Next(Blocks.Count);
                 if (!indices.Contains(index))
                 {
                     indices[count] = index;
