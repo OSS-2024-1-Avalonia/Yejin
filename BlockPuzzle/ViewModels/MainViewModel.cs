@@ -1,7 +1,6 @@
 ﻿using BlockPuzzle.Models;
-using System;
+using ReactiveUI;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace BlockPuzzle.ViewModels
@@ -10,7 +9,14 @@ namespace BlockPuzzle.ViewModels
     {
         public List<Cell> BoardCells { get; } = new List<Cell>();
         public List<Block> Blocks { get; }
-        public int MaxSize => Blocks.Select(b => b.Size).Max();
+
+        private Block? selectedBlock;
+        public Block? SelectedBlock
+        {
+            get { return selectedBlock; }
+            set { this.RaiseAndSetIfChanged(ref selectedBlock, value); }
+        }
+
 
         private const int Size = 8;
         private BlockGenerator blockGenerator;
@@ -26,6 +32,12 @@ namespace BlockPuzzle.ViewModels
 
             blockGenerator = new BlockGenerator();
             Blocks = blockGenerator.GenerateBlocks();
+            selectedBlock = Blocks[0];
+        }
+
+        public void StartDrag(Block block)
+        {
+            SelectedBlock = block;
         }
     }
 }
