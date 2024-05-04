@@ -1,96 +1,119 @@
-<UserControl xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="clr-namespace:BlockPuzzle.ViewModels"
-			 xmlns:models="clr-namespace:BlockPuzzle.Models"
-			 xmlns:cc="clr-namespace:BlockPuzzle.Controls"
-             mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="900"
-             x:Class="BlockPuzzle.Views.MainView"
-             x:DataType="vm:MainViewModel">
-	<StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Name="MainPanel"
-				DragDrop.AllowDrop="True" Background="LightYellow">
-		<StackPanel Orientation="Horizontal">
-			<TextBlock Text="Current Score" Margin="10"/>
-			<TextBlock Text="Icon" Margin="10"/>
-			<TextBlock Text="Before Score" Margin="10"/>
-		</StackPanel>
-		<ItemsControl ItemsSource="{CompiledBinding BoardCells}">
-			<ItemsControl.ItemTemplate>
-				<DataTemplate>
-					<Image	Grid.Row="{CompiledBinding X}"
-							Grid.Column="{CompiledBinding Y}"
-							Margin="1"
-							Height="32"
-							Width="32"
-							Source="avares://BlockPuzzle/Assets/Tile.png"/>
-				</DataTemplate>
-			</ItemsControl.ItemTemplate>
+<UserControl
+    x:Class="BlockPuzzle.Views.MainView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cc="clr-namespace:BlockPuzzle.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:BlockPuzzle.Models"
+    xmlns:vm="clr-namespace:BlockPuzzle.ViewModels"
+    d:DesignHeight="900"
+    d:DesignWidth="500"
+    x:DataType="vm:MainViewModel"
+    mc:Ignorable="d">
+    <Grid
+        Name="MainPanel"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        DragDrop.AllowDrop="True"
+        RowDefinitions="*,*,*,10">
 
-			<ItemsControl.ItemsPanel>
-				<ItemsPanelTemplate>
-					<UniformGrid Columns="8" Margin="10" Width="264"/>
-				</ItemsPanelTemplate>
-			</ItemsControl.ItemsPanel>
-		</ItemsControl>
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <TextBlock Margin="10" Text="Current Score" />
+            <TextBlock Margin="10" Text="Icon" />
+            <TextBlock Margin="10" Text="Before Score" />
+        </StackPanel>
+
+        <Grid Grid.Row="1">
+            <ItemsControl ItemsSource="{CompiledBinding BoardCells}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Image
+                            Grid.Row="{CompiledBinding X}"
+                            Grid.Column="{CompiledBinding Y}"
+                            Width="32"
+                            Height="32"
+                            Margin="1"
+                            Source="avares://BlockPuzzle/Assets/Tile.png" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid
+                            Width="264"
+                            Margin="10"
+                            Columns="8" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </Grid>
+
+        <Grid Grid.Row="2">
+            <ItemsControl ItemsSource="{CompiledBinding Blocks}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <ItemsControl ItemsSource="{CompiledBinding Cells}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Image
+                                        Grid.Row="{CompiledBinding X}"
+                                        Grid.Column="{CompiledBinding Y}"
+                                        Width="32"
+                                        Height="32"
+                                        Margin="1"
+                                        IsVisible="{CompiledBinding IsVisible}"
+                                        Source="avares://BlockPuzzle/Assets/Block.png" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid
+                                        Margin="10"
+                                        Background="LightCoral"
+                                        Columns="{CompiledBinding Size}"
+                                        PointerPressed="OnPointerPressed" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Grid>
 
 
-		<ItemsControl ItemsSource="{CompiledBinding Blocks}">
-			<ItemsControl.ItemsPanel>
-				<ItemsPanelTemplate>
-					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center"/>
-				</ItemsPanelTemplate>
-			</ItemsControl.ItemsPanel>
+        <Panel
+            Name="SelectedBlockGrid"
+            Grid.Row="3"
+            Width="{CompiledBinding SelectedGridSize}"
+            Height="{CompiledBinding SelectedGridSize}">
+            <ItemsControl ItemsSource="{CompiledBinding SelectedBlock.Cells}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="{CompiledBinding $parent.((vm:MainViewModel)DataContext).SelectedBlock.Size}" />
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
 
-			<ItemsControl.ItemTemplate>
-				<DataTemplate>
-					<ItemsControl ItemsSource="{CompiledBinding Cells}">
-						<ItemsControl.ItemTemplate>
-							<DataTemplate>
-								<Image	Grid.Row="{CompiledBinding X}"
-										Grid.Column="{CompiledBinding Y}"
-										Margin="1"
-										Height="32"
-										Width="32"
-										Source="avares://BlockPuzzle/Assets/Block.png"
-										IsVisible ="{CompiledBinding IsVisible}"/>
-							</DataTemplate>
-						</ItemsControl.ItemTemplate>
-
-						<ItemsControl.ItemsPanel>
-							<ItemsPanelTemplate>
-								<UniformGrid Columns="{CompiledBinding Size}" Margin="10" Background="LightCoral" PointerPressed="OnPointerPressed"/>
-								<!--<cc:MovableGrid Columns="{CompiledBinding Size}" Margin="10" Background="LightCoral" />-->
-							</ItemsPanelTemplate>
-						</ItemsControl.ItemsPanel>
-					</ItemsControl>
-				</DataTemplate>
-			</ItemsControl.ItemTemplate>
-		</ItemsControl>
-
-		<!--<Panel Width="164" Height="164"/>-->
-		
-		
-		<Panel Name="SelectedBlockGrid" Width="164" Height="164">
-			<ItemsControl ItemsSource="{CompiledBinding SelectedBlock.Cells}">
-				<ItemsControl.ItemsPanel>
-					<ItemsPanelTemplate>
-						<UniformGrid Columns="{CompiledBinding $parent.((vm:MainViewModel)DataContext).SelectedBlock.Size}" Background="LightBlue"/>
-					</ItemsPanelTemplate>
-				</ItemsControl.ItemsPanel>
-
-				<ItemsControl.ItemTemplate>
-					<DataTemplate>
-						<Image	Grid.Row="{CompiledBinding X}"
-								Grid.Column="{CompiledBinding Y}"
-								Margin="1"
-								Height="32"
-								Width="32"
-								Source="avares://BlockPuzzle/Assets/Block.png"
-								IsVisible ="{CompiledBinding IsVisible}"/>
-					</DataTemplate>
-				</ItemsControl.ItemTemplate>
-			</ItemsControl>
-		</Panel>
-	</StackPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Image
+                            Grid.Row="{CompiledBinding X}"
+                            Grid.Column="{CompiledBinding Y}"
+                            Width="32"
+                            Height="32"
+                            Margin="1"
+                            IsVisible="{CompiledBinding IsVisible}"
+                            Source="avares://BlockPuzzle/Assets/Block.png" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Panel>
+    </Grid>
 </UserControl>

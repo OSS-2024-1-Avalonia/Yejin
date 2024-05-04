@@ -1,22 +1,24 @@
 ﻿using BlockPuzzle.Models;
 using ReactiveUI;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace BlockPuzzle.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
+        public const int ImageSize = 32;
+        
         public List<Cell> BoardCells { get; } = new List<Cell>();
         public List<Block> Blocks { get; }
 
-        private Block? selectedBlock;
-        public Block? SelectedBlock
+        private Block _selectedBlock;
+        public Block SelectedBlock
         {
-            get { return selectedBlock; }
-            set { this.RaiseAndSetIfChanged(ref selectedBlock, value); }
+            get { return _selectedBlock; }
+            private set { this.RaiseAndSetIfChanged(ref _selectedBlock, value); }
         }
 
+        public int SelectedGridSize => SelectedBlock.Size * ImageSize + SelectedBlock.Size + 1;
 
         private const int Size = 8;
         private BlockGenerator blockGenerator;
@@ -32,7 +34,7 @@ namespace BlockPuzzle.ViewModels
 
             blockGenerator = new BlockGenerator();
             Blocks = blockGenerator.GenerateBlocks();
-            selectedBlock = Blocks[0];
+            _selectedBlock = Blocks[0];
         }
 
         public void StartDrag(Block block)
