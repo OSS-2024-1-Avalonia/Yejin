@@ -6,11 +6,11 @@ namespace BlockPuzzle.Models
 {
     public class BlockGenerator
     {
-        private List<Block> Blocks;
+        private readonly List<Block> _blocks;
 
         public BlockGenerator()
         {
-            Blocks = new List<Block>()
+            _blocks = new List<Block>()
             {
                 new Block{ Size = 1, Cells = new List<BlockCell> { new BlockCell { X = 0, Y = 0 } } },
                 new Block{ Size = 2, Cells = new List<BlockCell> { new BlockCell { X = 0, Y = 0 }, new BlockCell { X = 0, Y = 1 } } },
@@ -21,13 +21,13 @@ namespace BlockPuzzle.Models
                 new Block{ Size = 3, Cells = new List<BlockCell> { new BlockCell { X = 0, Y = 0 }, new BlockCell { X = 1, Y = 0 }, new BlockCell { X = 1, Y = 1 }, new BlockCell { X = 1, Y = 2 } } },
                 new Block{ Size = 3, Cells = new List<BlockCell> { new BlockCell { X = 0, Y = 1 }, new BlockCell { X = 1, Y = 0 }, new BlockCell { X = 1, Y = 1 }, new BlockCell { X = 1, Y = 2 } } },
                 new Block{ Size = 3, Cells = new List<BlockCell> { new BlockCell { X = 0, Y = 1 }, new BlockCell { X = 0, Y = 2 }, new BlockCell { X = 1, Y = 0 }, new BlockCell { X = 1, Y = 1 } } },
-                new Block{ Size = 4, Cells = new List<BlockCell> { new BlockCell { X = 0, Y = 1 }, new BlockCell { X = 1, Y = 1 }, new BlockCell { X = 2, Y = 1 }, new BlockCell { X = 3, Y = 1 } } },
+                new Block{ Size = 4, Cells = new List<BlockCell> { new BlockCell { X = 0, Y = 0 }, new BlockCell { X = 1, Y = 0 }, new BlockCell { X = 2, Y = 0 }, new BlockCell { X = 3, Y = 0 } } },
                 new Block{ Size = 5, Cells = new List<BlockCell> { new BlockCell { X = 0, Y = 0 }, new BlockCell { X = 0, Y = 1 }, new BlockCell { X = 0, Y = 2 }, new BlockCell { X = 0, Y = 3 }, new BlockCell { X = 0, Y = 4 } } },
                 new Block{ Size = 3, Cells = new List<BlockCell> { new BlockCell { X = 0, Y = 0 }, new BlockCell { X = 0, Y = 1 }, new BlockCell { X = 0, Y = 2 }, new BlockCell { X = 1, Y = 2 }, new BlockCell { X = 2, Y = 2 } } },
                 new Block{ Size = 3, Cells = new List<BlockCell> { new BlockCell { X = 0, Y = 0 }, new BlockCell { X = 0, Y = 1 }, new BlockCell { X = 0, Y = 2 }, new BlockCell { X = 1, Y = 0 }, new BlockCell { X = 1, Y = 1 }, new BlockCell { X = 1, Y = 2 }, new BlockCell { X = 2, Y = 0 }, new BlockCell { X = 2, Y = 1 }, new BlockCell { X = 2, Y = 2 } } },
             };
 
-            foreach (var block in Blocks)
+            foreach (var block in _blocks)
             {
                 block.Cells.ForEach(cell => cell.IsVisible = true);
 
@@ -54,7 +54,7 @@ namespace BlockPuzzle.Models
             var random = new Random();
             while (count < 3)
             {
-                var index = random.Next(Blocks.Count);
+                var index = random.Next(_blocks.Count);
                 if (!indices.Contains(index))
                 {
                     indices[count] = index;
@@ -63,10 +63,10 @@ namespace BlockPuzzle.Models
             }
 
             var result = new List<Block>();
-            int maxRow = indices.Select(i => Blocks[i].Size).Max();
+            int maxRow = indices.Select(i => _blocks[i].Size).Max();
             for (int i = 0; i < 3; i++)
             {
-                var block = Blocks[indices[i]];
+                var block = _blocks[indices[i]];
                 ModifyRow(maxRow, ref block);
                 result.Add(block);
             }

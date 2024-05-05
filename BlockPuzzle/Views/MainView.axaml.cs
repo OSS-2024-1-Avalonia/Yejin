@@ -4,23 +4,25 @@ using Avalonia.Controls.Primitives;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
-using BlockPuzzle.Controls;
 using BlockPuzzle.Models;
 using BlockPuzzle.ViewModels;
 using System;
+using System.Linq;
+using Avalonia.LogicalTree;
+using Avalonia.VisualTree;
 
 namespace BlockPuzzle.Views
 {
     public partial class MainView : UserControl
     {
-        private Point selectedPosition = new(0, 0);
-        private readonly Point mouseOffset = new(-5, -5);
+        private Point _selectedPosition = new(0, 0);
 
         public MainView()
         {
             InitializeComponent();
 
             AddHandler(DragDrop.DragOverEvent, DragOver);
+            AddHandler(DragDrop.DropEvent, Drop);
         }
 
         protected override void OnLoaded(RoutedEventArgs e)
@@ -37,11 +39,11 @@ namespace BlockPuzzle.Views
             if (grid.DataContext is not Block block) return;
 
             var selectedPos = SelectedBlockGrid.Bounds.Position;
-            selectedPosition = new Point(selectedPos.X + mouseOffset.X, selectedPos.Y + mouseOffset.Y);
+            _selectedPosition = new Point(selectedPos.X, selectedPos.Y);
 
             var mousePos = e.GetPosition(MainPanel);
             var offsetX = mousePos.X - selectedPos.X;
-            var offsetY = mousePos.Y - selectedPos.Y + mouseOffset.X;
+            var offsetY = mousePos.Y - selectedPos.Y;
             SelectedBlockGrid.RenderTransform = new TranslateTransform(offsetX, offsetY);
 
             if (DataContext is not MainViewModel viewModel) return;
@@ -51,7 +53,7 @@ namespace BlockPuzzle.Views
 
             var dragData = new DataObject();
             dragData.Set("Block", block);
-            var result = await DragDrop.DoDragDrop(e, dragData, DragDropEffects.None);
+            var result = await DragDrop.DoDragDrop(e, dragData, DragDropEffects.Move);
             Console.WriteLine($"Drag result: {result}");
             SelectedBlockGrid.IsVisible = false;
         }
@@ -60,21 +62,35 @@ namespace BlockPuzzle.Views
         {
             var currentPosition = e.GetPosition(MainPanel);
 
-            var offsetX = currentPosition.X - selectedPosition.X;
-            var offsetY = currentPosition.Y - selectedPosition.Y;
+            var offsetX = currentPosition.X - _selectedPosition.X;
+            var offsetY = currentPosition.Y - _selectedPosition.Y;
 
             SelectedBlockGrid.RenderTransform = new TranslateTransform(offsetX, offsetY);
             e.DragEffects = DragDropEffects.Move;
-
-            // set drag cursor icon
-            //e.DragEffects = DragDropEffects.Move;
-            //if (DataContext is not DragAndDropPageViewModel vm) return;
-            //var data = e.Data.Get(DragAndDropPageViewModel.CustomFormat);
-            //if (data is not TaskItem taskItem) return;
+            
+            // if (DataContext is not MainViewModel vm) return;
+            // var data = e.Data.Get("Block");
+            // if (data is not Block block) return;
             //if (!vm.IsDestinationValid(taskItem, (e.Source as Control)?.Name))
             //{
             //    e.DragEffects = DragDropEffects.None;
             //}
+        }
+        
+        private void Drop(object? sender, DragEventArgs e)
+        {
+            Console.WriteLine("Drop");
+
+            var data = e.Data.Get("Block");
+
+            if (data is not Block block) return;
+            if (DataContext is not MainViewModel vm) return;
+            
+            var boardPosition = e.GetPosition(Board);
+            if (Board.Children.First() is not ItemsControl itemsControl) return;
+            var boardPanel = itemsControl.ItemsPanelRoot;
+            boardPosition -= boardPanel?.Bounds.Position ?? new Point();
+            vm.Drop(block, boardPosition, boardPanel);
         }
     }
 }
