@@ -18,8 +18,6 @@ namespace BlockPuzzle.ViewModels
             private set { this.RaiseAndSetIfChanged(ref _selectedBlock, value); }
         }
 
-        public int SelectedGridSize => SelectedBlock.Size * ImageSize + SelectedBlock.Size + 1;
-
         private const int Size = 8;
         private BlockGenerator blockGenerator;
         public MainViewModel()

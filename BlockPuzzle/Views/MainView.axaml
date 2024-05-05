@@ -77,7 +77,6 @@
                                 <ItemsPanelTemplate>
                                     <UniformGrid
                                         Margin="10"
-                                        Background="LightCoral"
                                         Columns="{CompiledBinding Size}"
                                         PointerPressed="OnPointerPressed" />
                                 </ItemsPanelTemplate>
@@ -89,11 +88,9 @@
         </Grid>
 
 
-        <Panel
+        <Canvas
             Name="SelectedBlockGrid"
-            Grid.Row="3"
-            Width="{CompiledBinding SelectedGridSize}"
-            Height="{CompiledBinding SelectedGridSize}">
+            Grid.Row="3">
             <ItemsControl ItemsSource="{CompiledBinding SelectedBlock.Cells}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -114,6 +111,6 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-        </Panel>
+        </Canvas>
     </Grid>
 </UserControl>
