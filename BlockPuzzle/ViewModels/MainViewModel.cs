@@ -12,43 +12,32 @@ namespace BlockPuzzle.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
-        private struct Line
-        {
-            public int Index;
-            public bool IsHorizontal;
-        }
-        
         private const int ImageSize = 32;
         private const int MaxBlockCount = 1;
         
-        public List<BoardCell> BoardCells { get; } = new List<BoardCell>();
-        public List<Block> Blocks { get; }
+        public List<BoardCell> BoardCells => _board.BoardCells;
+
+        private readonly List<Block> _blocks;
+        public List<Block> Blocks => _blocks;
 
         private Block _selectedBlock;
         public Block SelectedBlock
         {
-            get { return _selectedBlock; }
-            private set { this.RaiseAndSetIfChanged(ref _selectedBlock, value); }
+            get =>  _selectedBlock;
+            private set => this.RaiseAndSetIfChanged(ref _selectedBlock, value);
         }
 
         private const int Size = 8;
-        private BlockGenerator blockGenerator;
+        private readonly Board _board;
+        private readonly BlockGenerator _blockGenerator;
         private readonly Bitmap[] _fillTiles = new Bitmap[4];
         public MainViewModel()
         {
-            for (var i = 0; i < Size; i++)
-            {
-                for (var j = 0; j < Size; j++)
-                {
-                    BoardCells.Add(new BoardCell { X = i, Y = j });
-                }
-            }
-
-            blockGenerator = new BlockGenerator();
-            Blocks = blockGenerator.GenerateBlocks();
+            _board = new Board(Size, MaxBlockCount);
+            _blockGenerator = new BlockGenerator();
+            _blocks = _blockGenerator.GenerateBlocks();
             _selectedBlock = Blocks[0];
-
-            _fillTiles[0] = new Bitmap(AssetLoader.Open(new Uri("avares://BlockPuzzle/Assets/Tile.png")));
+            
             for (var i = 1; i <= MaxBlockCount; i++)
             {
                 _fillTiles[i] = new Bitmap(AssetLoader.Open(new Uri($"avares://BlockPuzzle/Assets/FillTile{i}.png")));
@@ -102,54 +91,7 @@ namespace BlockPuzzle.ViewModels
                     image.Source = _fillTiles[boardCell.Count];
             }
             
-            RemoveLines(FindRemoveLine(), boardCellElements);
-        }
-        
-        private IEnumerable<Line> FindRemoveLine()
-        {
-            List<Line> lines = new List<Line>();
-            for (var i = 0; i < Size; i++)
-            {
-                var horizontalCount = 0;
-                var verticalCount = 0;
-                for (var j = 0; j < Size; j++)
-                {
-                    if (BoardCells[i * Size + j].Count == MaxBlockCount)
-                    {
-                        horizontalCount++;
-                    }
-                    if (BoardCells[j * Size + i].Count == MaxBlockCount)
-                    {
-                        verticalCount++;
-                    }
-                }
-                
-                if (horizontalCount == Size)
-                {
-                    lines.Add(new Line { Index = i, IsHorizontal = true });
-                }
-                if (verticalCount == Size)
-                {
-                    lines.Add(new Line { Index = i, IsHorizontal = false });
-                }
-            }
-            
-            return lines;
-        }
-        
-        private void RemoveLines(IEnumerable<Line> lines, Controls boardElements)
-        {
-            foreach (var line in lines)
-            {
-                for (var i = 0; i < Size; i++)
-                {
-                    var cellIndex = (line.IsHorizontal) ? line.Index * Size + i : i * Size + line.Index;
-                    BoardCells[cellIndex].Count = 0;
-                    var image = (boardElements[cellIndex] as ContentPresenter)?.Child as Image;
-                    if (image != null)
-                        image.Source = _fillTiles[0];
-                }
-            }
+            _board.RemoveLines(boardCellElements);
         }
     }
 }
