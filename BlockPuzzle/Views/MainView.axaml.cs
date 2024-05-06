@@ -35,6 +35,7 @@ namespace BlockPuzzle.Views
 
             if (sender is not UniformGrid grid) return;
             if (grid.DataContext is not Block block) return;
+            if (block.IsUsed) return;
 
             var selectedPos = SelectedBlockGrid.Bounds.Position;
             _selectedPosition = selectedPos;

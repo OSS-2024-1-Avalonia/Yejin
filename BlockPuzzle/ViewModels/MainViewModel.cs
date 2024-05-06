@@ -2,12 +2,14 @@
 using BlockPuzzle.Models;
 using ReactiveUI;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using DynamicData;
 
 namespace BlockPuzzle.ViewModels
 {
@@ -17,9 +19,8 @@ namespace BlockPuzzle.ViewModels
         private const int MaxBlockCount = 1;
         
         public List<BoardCell> BoardCells => _board.BoardCells;
-
-        private readonly List<Block> _blocks;
-        public List<Block> Blocks => _blocks;
+        
+        public ObservableCollection<Block> Blocks { get; } = new();
 
         private Block _selectedBlock;
         public Block SelectedBlock
@@ -36,7 +37,7 @@ namespace BlockPuzzle.ViewModels
         {
             _board = new Board(Size, MaxBlockCount);
             _blockGenerator = new BlockGenerator();
-            _blocks = _blockGenerator.GenerateBlocks();
+            Blocks.AddRange(_blockGenerator.GenerateBlocks());
             _selectedBlock = Blocks[0];
             
             for (var i = 1; i <= MaxBlockCount; i++)
@@ -52,7 +53,7 @@ namespace BlockPuzzle.ViewModels
 
         public bool IsDestinationValid(Block block, Point selectedPoint, Panel? board)
         {
-            if (board == null) return false;
+            if (block.IsUsed || board == null) return false;
             
             var columnIndex = (int) Math.Round(selectedPoint.X / ImageSize);
             var rowIndex = (int) Math.Round(selectedPoint.Y / ImageSize);
@@ -98,7 +99,6 @@ namespace BlockPuzzle.ViewModels
             {
                 Blocks.Clear();
                 Blocks.AddRange(_blockGenerator.GenerateBlocks());
-                Console.WriteLine("Clear");
             }
         }
     }
