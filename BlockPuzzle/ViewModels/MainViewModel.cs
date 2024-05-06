@@ -27,7 +27,7 @@ namespace BlockPuzzle.ViewModels
 
         private const int Size = 8;
         private BlockGenerator blockGenerator;
-        private Bitmap[] fillTiles = new Bitmap[4];
+        private readonly Bitmap[] _fillTiles = new Bitmap[4];
         public MainViewModel()
         {
             for (var i = 0; i < Size; i++)
@@ -42,9 +42,10 @@ namespace BlockPuzzle.ViewModels
             Blocks = blockGenerator.GenerateBlocks();
             _selectedBlock = Blocks[0];
 
-            for (int i = 1; i <= MaxBlockCount; i++)
+            _fillTiles[0] = new Bitmap(AssetLoader.Open(new Uri($"avares://BlockPuzzle/Assets/Tile.png")));
+            for (var i = 1; i <= MaxBlockCount; i++)
             {
-                fillTiles[i] = new Bitmap(AssetLoader.Open(new Uri($"avares://BlockPuzzle/Assets/FillTile{i}.png")));
+                _fillTiles[i] = new Bitmap(AssetLoader.Open(new Uri($"avares://BlockPuzzle/Assets/FillTile{i}.png")));
             }
         }
 
@@ -75,11 +76,8 @@ namespace BlockPuzzle.ViewModels
         public void Drop(Block block, Point selectedPoint, Panel? board)
         {
             if (board == null) return;
-
-            // TODO: image change
-            // TODO: check if line is full
-            // TODO: remove line
-            // TODO: ㄹ 모양 버그 수정해야 함
+            
+            // TODO: ㅗ, ㄹ 모양 버그 수정해야 함
             var columnIndex = (int) Math.Round(selectedPoint.X / ImageSize);
             var rowIndex = (int) Math.Round(selectedPoint.Y / ImageSize);
             
@@ -95,8 +93,78 @@ namespace BlockPuzzle.ViewModels
                 boardCell.Count++;
                 var image = (boardCellElements[cellIndex] as ContentPresenter)?.Child as Image;
                 if (image != null)
-                    image.Source = fillTiles[boardCell.Count];
+                    image.Source = _fillTiles[boardCell.Count];
             }
+            
+            RemoveLines(FindRemoveLine(), boardCellElements);
+        }
+        
+        private IEnumerable<Line> FindRemoveLine()
+        {
+            List<Line> lines = new List<Line>();
+            for (var i = 0; i < Size; i++)
+            {
+                var horizontalCount = 0;
+                var verticalCount = 0;
+                for (var j = 0; j < Size; j++)
+                {
+                    if (BoardCells[i * Size + j].Count == MaxBlockCount)
+                    {
+                        horizontalCount++;
+                    }
+                    if (BoardCells[j * Size + i].Count == MaxBlockCount)
+                    {
+                        verticalCount++;
+                    }
+                }
+                
+                if (horizontalCount == Size)
+                {
+                    lines.Add(new Line { Index = i, IsHorizontal = true });
+                }
+                if (verticalCount == Size)
+                {
+                    lines.Add(new Line { Index = i, IsHorizontal = false });
+                }
+            }
+            
+            return lines;
+        }
+        
+        private void RemoveLines(IEnumerable<Line> lines, Avalonia.Controls.Controls boardElements)
+        {
+            foreach (var line in lines)
+            {
+                if (line.IsHorizontal)
+                {
+                    for (var i = 0; i < Size; i++)
+                    {
+                        var cellIndex = line.Index * Size + i;
+                        BoardCells[cellIndex].Count = 0;
+                        var image = (boardElements[cellIndex] as ContentPresenter)?.Child as Image;
+                        if (image != null)
+                            image.Source = _fillTiles[0];
+                    }
+                }
+                else
+                {
+                    for (var i = 0; i < Size; i++)
+                    {
+                        var cellIndex = i * Size + line.Index;
+                        BoardCells[cellIndex].Count = 0;
+                        var image = (boardElements[cellIndex] as ContentPresenter)?.Child as Image;
+                        if (image != null)
+                            image.Source = _fillTiles[0];
+                    }
+                }
+            }
+            
+        }
+        
+        private struct Line
+        {
+            public int Index;
+            public bool IsHorizontal;
         }
     }
 }

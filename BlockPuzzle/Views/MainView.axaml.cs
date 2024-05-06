@@ -8,8 +8,6 @@ using BlockPuzzle.Models;
 using BlockPuzzle.ViewModels;
 using System;
 using System.Linq;
-using Avalonia.LogicalTree;
-using Avalonia.VisualTree;
 
 namespace BlockPuzzle.Views
 {
@@ -39,7 +37,7 @@ namespace BlockPuzzle.Views
             if (grid.DataContext is not Block block) return;
 
             var selectedPos = SelectedBlockGrid.Bounds.Position;
-            _selectedPosition = new Point(selectedPos.X, selectedPos.Y);
+            _selectedPosition = selectedPos;
 
             var mousePos = e.GetPosition(MainPanel);
             var offsetX = mousePos.X - selectedPos.X;
