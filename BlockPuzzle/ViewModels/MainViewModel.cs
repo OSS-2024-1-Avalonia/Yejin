@@ -12,9 +12,10 @@ namespace BlockPuzzle.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
-        public const int ImageSize = 32;
+        private const int ImageSize = 32;
+        private const int MaxBlockCount = 1;
         
-        public List<Cell> BoardCells { get; } = new List<Cell>();
+        public List<BoardCell> BoardCells { get; } = new List<BoardCell>();
         public List<Block> Blocks { get; }
 
         private Block _selectedBlock;
@@ -26,19 +27,25 @@ namespace BlockPuzzle.ViewModels
 
         private const int Size = 8;
         private BlockGenerator blockGenerator;
+        private Bitmap[] fillTiles = new Bitmap[4];
         public MainViewModel()
         {
             for (var i = 0; i < Size; i++)
             {
                 for (var j = 0; j < Size; j++)
                 {
-                    BoardCells.Add(new Cell { X = i, Y = j });
+                    BoardCells.Add(new BoardCell { X = i, Y = j });
                 }
             }
 
             blockGenerator = new BlockGenerator();
             Blocks = blockGenerator.GenerateBlocks();
             _selectedBlock = Blocks[0];
+
+            for (int i = 1; i <= MaxBlockCount; i++)
+            {
+                fillTiles[i] = new Bitmap(AssetLoader.Open(new Uri($"avares://BlockPuzzle/Assets/FillTile{i}.png")));
+            }
         }
 
         public void StartDrag(Block block)
@@ -46,25 +53,49 @@ namespace BlockPuzzle.ViewModels
             SelectedBlock = block;
         }
 
-        public void Drop(Block block, Point selectedPoint, Panel? board)
+        public bool IsDestinationValid(Block block, Point selectedPoint, Panel? board)
         {
-            if (board == null) return;
+            if (board == null) return false;
             
             var columnIndex = (int) Math.Round(selectedPoint.X / ImageSize);
             var rowIndex = (int) Math.Round(selectedPoint.Y / ImageSize);
+            
+            foreach (var cell in block.Cells)
+            { 
+                if (cell.IsVisible == false) continue;
+                
+                var cellIndex = (rowIndex + cell.X) * Size + columnIndex + cell.Y;
+                if (cellIndex < 0 || cellIndex >= Size * Size) return false;
+                if (BoardCells[cellIndex].Count >= MaxBlockCount) return false;
+            }
+            
+            return true;
+        }
 
-            var cells = block.Cells;
+        public void Drop(Block block, Point selectedPoint, Panel? board)
+        {
+            if (board == null) return;
+
+            // TODO: image change
+            // TODO: check if line is full
+            // TODO: remove line
+            // TODO: ㄹ 모양 버그 수정해야 함
+            var columnIndex = (int) Math.Round(selectedPoint.X / ImageSize);
+            var rowIndex = (int) Math.Round(selectedPoint.Y / ImageSize);
+            
             var boardCellElements = board.Children;
-            foreach (var cell in cells)
+            foreach (var cell in block.Cells)
             {
                 if (cell.IsVisible == false) continue;
                 
                 var cellIndex = (rowIndex + cell.X) * Size + columnIndex + cell.Y;
                 if (cellIndex < 0 || cellIndex >= Size * Size) return;
 
+                var boardCell = BoardCells[cellIndex];
+                boardCell.Count++;
                 var image = (boardCellElements[cellIndex] as ContentPresenter)?.Child as Image;
                 if (image != null)
-                    image.Source = new Bitmap(AssetLoader.Open(new Uri("avares://BlockPuzzle/Assets/Block.png")));
+                    image.Source = fillTiles[boardCell.Count];
             }
         }
     }

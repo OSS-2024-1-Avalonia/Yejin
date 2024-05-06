@@ -67,20 +67,25 @@ namespace BlockPuzzle.Views
 
             SelectedBlockGrid.RenderTransform = new TranslateTransform(offsetX, offsetY);
             e.DragEffects = DragDropEffects.Move;
+
+            if (DataContext is not MainViewModel vm) return;
+            var data = e.Data.Get("Block");
+            if (data is not Block block) return;
             
-            // if (DataContext is not MainViewModel vm) return;
-            // var data = e.Data.Get("Block");
-            // if (data is not Block block) return;
-            //if (!vm.IsDestinationValid(taskItem, (e.Source as Control)?.Name))
-            //{
-            //    e.DragEffects = DragDropEffects.None;
-            //}
+            var boardPosition = e.GetPosition(Board);
+            if (Board.Children.First() is not ItemsControl itemsControl) return;
+            var boardPanel = itemsControl.ItemsPanelRoot;
+            boardPosition -= boardPanel?.Bounds.Position ?? new Point();
+
+            e.DragEffects = vm.IsDestinationValid(block, boardPosition, boardPanel)
+                ? DragDropEffects.Move
+                : DragDropEffects.None;
         }
-        
+
         private void Drop(object? sender, DragEventArgs e)
         {
             Console.WriteLine("Drop");
-
+            
             var data = e.Data.Get("Block");
 
             if (data is not Block block) return;
@@ -90,7 +95,9 @@ namespace BlockPuzzle.Views
             if (Board.Children.First() is not ItemsControl itemsControl) return;
             var boardPanel = itemsControl.ItemsPanelRoot;
             boardPosition -= boardPanel?.Bounds.Position ?? new Point();
-            vm.Drop(block, boardPosition, boardPanel);
+
+            if (vm.IsDestinationValid(block, boardPosition, boardPanel))
+                vm.Drop(block, boardPosition, boardPanel);
         }
     }
 }
