@@ -12,6 +12,12 @@ namespace BlockPuzzle.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
+        private struct Line
+        {
+            public int Index;
+            public bool IsHorizontal;
+        }
+        
         private const int ImageSize = 32;
         private const int MaxBlockCount = 1;
         
@@ -42,7 +48,7 @@ namespace BlockPuzzle.ViewModels
             Blocks = blockGenerator.GenerateBlocks();
             _selectedBlock = Blocks[0];
 
-            _fillTiles[0] = new Bitmap(AssetLoader.Open(new Uri($"avares://BlockPuzzle/Assets/Tile.png")));
+            _fillTiles[0] = new Bitmap(AssetLoader.Open(new Uri("avares://BlockPuzzle/Assets/Tile.png")));
             for (var i = 1; i <= MaxBlockCount; i++)
             {
                 _fillTiles[i] = new Bitmap(AssetLoader.Open(new Uri($"avares://BlockPuzzle/Assets/FillTile{i}.png")));
@@ -131,40 +137,19 @@ namespace BlockPuzzle.ViewModels
             return lines;
         }
         
-        private void RemoveLines(IEnumerable<Line> lines, Avalonia.Controls.Controls boardElements)
+        private void RemoveLines(IEnumerable<Line> lines, Controls boardElements)
         {
             foreach (var line in lines)
             {
-                if (line.IsHorizontal)
+                for (var i = 0; i < Size; i++)
                 {
-                    for (var i = 0; i < Size; i++)
-                    {
-                        var cellIndex = line.Index * Size + i;
-                        BoardCells[cellIndex].Count = 0;
-                        var image = (boardElements[cellIndex] as ContentPresenter)?.Child as Image;
-                        if (image != null)
-                            image.Source = _fillTiles[0];
-                    }
-                }
-                else
-                {
-                    for (var i = 0; i < Size; i++)
-                    {
-                        var cellIndex = i * Size + line.Index;
-                        BoardCells[cellIndex].Count = 0;
-                        var image = (boardElements[cellIndex] as ContentPresenter)?.Child as Image;
-                        if (image != null)
-                            image.Source = _fillTiles[0];
-                    }
+                    var cellIndex = (line.IsHorizontal) ? line.Index * Size + i : i * Size + line.Index;
+                    BoardCells[cellIndex].Count = 0;
+                    var image = (boardElements[cellIndex] as ContentPresenter)?.Child as Image;
+                    if (image != null)
+                        image.Source = _fillTiles[0];
                 }
             }
-            
-        }
-        
-        private struct Line
-        {
-            public int Index;
-            public bool IsHorizontal;
         }
     }
 }
