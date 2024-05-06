@@ -67,6 +67,7 @@ namespace BlockPuzzle.Models
             for (int i = 0; i < 3; i++)
             {
                 var block = _blocks[indices[i]];
+                block.Id = i;
                 ModifyRow(maxRow, ref block);
                 result.Add(block);
             }

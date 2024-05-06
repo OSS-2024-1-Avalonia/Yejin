@@ -2,6 +2,7 @@
 using BlockPuzzle.Models;
 using ReactiveUI;
 using System.Collections.Generic;
+using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
@@ -72,7 +73,7 @@ namespace BlockPuzzle.ViewModels
         {
             if (board == null) return;
             
-            // TODO: ㅗ, ㄹ 모양 버그 수정해야 함
+            // TODO: 영역 벗어나도 블록 놔지는 버그 수정해야 함
             var columnIndex = (int) Math.Round(selectedPoint.X / ImageSize);
             var rowIndex = (int) Math.Round(selectedPoint.Y / ImageSize);
             
@@ -92,6 +93,13 @@ namespace BlockPuzzle.ViewModels
             }
             
             _board.RemoveLines(boardCellElements);
+            Blocks[block.Id].IsUsed = true;
+            if (Blocks.All(b => b.IsUsed))
+            {
+                Blocks.Clear();
+                Blocks.AddRange(_blockGenerator.GenerateBlocks());
+                Console.WriteLine("Clear");
+            }
         }
     }
 }
