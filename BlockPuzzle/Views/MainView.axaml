@@ -88,9 +88,7 @@
         </Grid>
 
 
-        <Canvas
-            Name="SelectedBlockGrid"
-            Grid.Row="3">
+        <Canvas Name="SelectedBlockGrid" Grid.Row="3">
             <ItemsControl ItemsSource="{CompiledBinding SelectedBlock.Cells}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>

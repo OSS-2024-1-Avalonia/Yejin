@@ -66,7 +66,7 @@ namespace BlockPuzzle.Models
             int maxRow = indices.Select(i => _blocks[i].Size).Max();
             for (int i = 0; i < 3; i++)
             {
-                var block = _blocks[indices[i]];
+                var block = _blocks[indices[i]].Clone() as Block;
                 block.Id = i;
                 block.IsUsed = false;
                 ModifyRow(maxRow, ref block);
