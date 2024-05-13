@@ -18,9 +18,9 @@
         Background="DodgerBlue">
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
-            <TextBlock Margin="10" Text="{CompiledBinding Score}" />
-            <TextBlock Margin="10" Text="Icon" />
-            <TextBlock Margin="10" Text="Before Score" />
+            <TextBlock Margin="10" Text="{CompiledBinding Score}" FontSize="30" FontWeight="Heavy"/>
+            <!-- <TextBlock Margin="10" Text="Icon" /> -->
+            <!-- <TextBlock Margin="10" Text="Before Score" /> -->
         </StackPanel>
 
         <Grid Grid.Row="1" Name="Board" Margin="0" Background="Chocolate">
