@@ -29,14 +29,16 @@ namespace BlockPuzzle.ViewModels
             private set => this.RaiseAndSetIfChanged(ref _selectedBlock, value);
         }
 
+        public long Score => _scoreCalculater.Score;
+        
         private const int Size = 8;
         private readonly Board _board;
-        private readonly BlockGenerator _blockGenerator;
+        private readonly BlockGenerator _blockGenerator = new();
+        private readonly ScoreCalculater _scoreCalculater = new();
         private readonly Bitmap[] _fillTiles = new Bitmap[4];
         public MainViewModel()
         {
             _board = new Board(Size, MaxBlockCount);
-            _blockGenerator = new BlockGenerator();
             Blocks.AddRange(_blockGenerator.GenerateBlocks());
             _selectedBlock = Blocks[0];
             
@@ -92,8 +94,19 @@ namespace BlockPuzzle.ViewModels
                 if (image != null)
                     image.Source = _fillTiles[boardCell.Count];
             }
+
+            if (_board.HasRemovableLine())
+            {
+                
+                var lineCount = _board.RemoveLines(boardCellElements);
+                _scoreCalculater.AddScore(lineCount);
+                this.RaisePropertyChanged("Score");
+            }
+            else
+            {
+                _scoreCalculater.IsCombo = false;
+            }
             
-            _board.RemoveLines(boardCellElements);
             Blocks[block.Id].IsUsed = true;
             if (Blocks.All(b => b.IsUsed))
             {

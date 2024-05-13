@@ -17,8 +17,8 @@
         DragDrop.AllowDrop="True"
         Background="DodgerBlue">
 
-        <StackPanel Grid.Row="0" Orientation="Horizontal">
-            <TextBlock Margin="10" Text="Current Score" />
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
+            <TextBlock Margin="10" Text="{CompiledBinding Score}" />
             <TextBlock Margin="10" Text="Icon" />
             <TextBlock Margin="10" Text="Before Score" />
         </StackPanel>

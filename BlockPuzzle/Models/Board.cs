@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Controls.Presenters;
 using Avalonia.Media.Imaging;
@@ -37,8 +38,13 @@ public class Board
         
         _tileImage = new Bitmap(AssetLoader.Open(new Uri("avares://BlockPuzzle/Assets/Tile.png")));
     }
+
+    public bool HasRemovableLine()
+    {
+        return FindRemoveLine().Any();
+    }
     
-    public void RemoveLines(Controls boardElements)
+    public int RemoveLines(Controls boardElements)
     {
         var lines = FindRemoveLine();
         
@@ -53,6 +59,8 @@ public class Board
                     image.Source = _tileImage;
             }
         }
+
+        return lines.Count();
     }
     
     private IEnumerable<Line> FindRemoveLine()
