@@ -40,12 +40,14 @@ namespace BlockPuzzle.ViewModels
         
         private const int Size = 8;
         private readonly Board _board;
-        private readonly BlockGenerator _blockGenerator = new();
+        private readonly BlockGenerator _blockGenerator;
         private readonly ScoreCalculater _scoreCalculater = new();
         private readonly Bitmap[] _fillTiles = new Bitmap[4];
         public MainViewModel()
         {
             _board = new Board(Size, MaxBlockCount);
+            _blockGenerator = new BlockGenerator(_board);
+            
             Blocks.AddRange(_blockGenerator.GenerateBlocks());
             _selectedBlock = Blocks[0];
             
@@ -120,17 +122,15 @@ namespace BlockPuzzle.ViewModels
                 Blocks.Clear();
                 Blocks.AddRange(_blockGenerator.GenerateBlocks());
             }
+            
+            IsGameOver = Blocks.All(b => b.IsUsed || !_board.CanPlaceBlock(b));
+            if (IsGameOver)
+            {
+                Console.WriteLine("Game Over!");
+            }
             else
             {
-                IsGameOver = Blocks.All(b => b.IsUsed || !_board.CanPlaceBlock(b));
-                if (IsGameOver)
-                {
-                    Console.WriteLine("Game Over!");
-                }
-                else
-                {
-                    Console.WriteLine("Next Turn!");
-                }
+                Console.WriteLine("Next Turn!");
             }
         }
     }

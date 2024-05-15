@@ -6,10 +6,12 @@ namespace BlockPuzzle.Models
 {
     public class BlockGenerator
     {
+        private readonly Board _board;
         private readonly List<Block> _blocks;
 
-        public BlockGenerator()
+        public BlockGenerator(Board board)
         {
+            _board = board;
             _blocks = new List<Block>()
             {
                 new Block{ Size = 1, Cells = new List<BlockCell> { new BlockCell { X = 0, Y = 0 } } },
@@ -25,6 +27,7 @@ namespace BlockPuzzle.Models
                 new Block{ Size = 5, Cells = new List<BlockCell> { new BlockCell { X = 0, Y = 0 }, new BlockCell { X = 0, Y = 1 }, new BlockCell { X = 0, Y = 2 }, new BlockCell { X = 0, Y = 3 }, new BlockCell { X = 0, Y = 4 } } },
                 new Block{ Size = 3, Cells = new List<BlockCell> { new BlockCell { X = 0, Y = 0 }, new BlockCell { X = 0, Y = 1 }, new BlockCell { X = 0, Y = 2 }, new BlockCell { X = 1, Y = 2 }, new BlockCell { X = 2, Y = 2 } } },
                 new Block{ Size = 3, Cells = new List<BlockCell> { new BlockCell { X = 0, Y = 0 }, new BlockCell { X = 0, Y = 1 }, new BlockCell { X = 0, Y = 2 }, new BlockCell { X = 1, Y = 0 }, new BlockCell { X = 1, Y = 1 }, new BlockCell { X = 1, Y = 2 }, new BlockCell { X = 2, Y = 0 }, new BlockCell { X = 2, Y = 1 }, new BlockCell { X = 2, Y = 2 } } },
+                new Block{ Size = 1, Cells = new List<BlockCell> { new BlockCell { X = 0, Y = 0 } } },
             };
 
             foreach (var block in _blocks)
@@ -47,10 +50,31 @@ namespace BlockPuzzle.Models
             }
         }
 
+        private int SelectValidBlock()
+        {
+            var random = new Random();
+            var indices = Enumerable.Range(0, _blocks.Count).OrderBy(x => random.Next()).ToList();
+            foreach (var index in indices)
+            {
+                var block = _blocks[index];
+                if (_board.CanPlaceBlock(block)) return index;    
+            }
+
+            return -1;
+        }
+
         public List<Block> GenerateBlocks()
         {
-            int[] indices = new int[3];
-            int count = 0;
+            var indices = new int[3];
+            var firstBlockIndex = SelectValidBlock();
+
+            var count = 0;
+            if (firstBlockIndex != -1)
+            {
+                indices[count] = firstBlockIndex;
+                count++;
+            }
+
             var random = new Random();
             while (count < 3)
             {
@@ -63,8 +87,8 @@ namespace BlockPuzzle.Models
             }
 
             var result = new List<Block>();
-            int maxRow = indices.Select(i => _blocks[i].Size).Max();
-            for (int i = 0; i < 3; i++)
+            var maxRow = indices.Select(i => _blocks[i].Size).Max();
+            for (var i = 0; i < 3; i++)
             {
                 var block = _blocks[indices[i]].Clone() as Block;
                 block.Id = i;
@@ -78,9 +102,9 @@ namespace BlockPuzzle.Models
         private void ModifyRow(int maxRow, ref Block block)
         {
             var cells = block.Cells;
-            for (int j = block.Size; j < maxRow; j++)
+            for (var j = block.Size; j < maxRow; j++)
             {
-                for (int k = 0; k < block.Size; k++)
+                for (var k = 0; k < block.Size; k++)
                 {
                     cells.Add(new BlockCell { X = j, Y = k });
                 }
