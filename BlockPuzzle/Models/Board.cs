@@ -18,7 +18,6 @@ public class Board
 
     private readonly int _size;
     private readonly int _maxBlockCount;
-    private readonly Bitmap _tileImage;
     
     public List<BoardCell> BoardCells { get; }
     
@@ -35,8 +34,6 @@ public class Board
                 BoardCells.Add(new BoardCell { X = i, Y = j });
             }
         }
-        
-        _tileImage = new Bitmap(AssetLoader.Open(new Uri("avares://BlockPuzzle/Assets/Tile.png")));
     }
 
     public bool HasRemovableLine()
@@ -44,7 +41,7 @@ public class Board
         return FindRemoveLine().Any();
     }
     
-    public int RemoveLines(Avalonia.Controls.Controls boardElements)
+    public int RemoveLines(Controls boardElements)
     {
         var lines = FindRemoveLine();
         
@@ -54,9 +51,6 @@ public class Board
             {
                 var cellIndex = (line.IsHorizontal) ? line.Index * _size + i : i * _size + line.Index;
                 BoardCells[cellIndex].Count = 0;
-                var image = (boardElements[cellIndex] as ContentPresenter)?.Child as Image;
-                if (image != null)
-                    image.Source = _tileImage;
             }
         }
 
@@ -72,11 +66,11 @@ public class Board
             var verticalCount = 0;
             for (var j = 0; j < _size; j++)
             {
-                if (BoardCells[i * _size + j].Count == _maxBlockCount)
+                if (BoardCells[i * _size + j].Count != 0)
                 {
                     horizontalCount++;
                 }
-                if (BoardCells[j * _size + i].Count == _maxBlockCount)
+                if (BoardCells[j * _size + i].Count != 0)
                 {
                     verticalCount++;
                 }

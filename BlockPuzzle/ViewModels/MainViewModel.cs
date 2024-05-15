@@ -16,7 +16,7 @@ namespace BlockPuzzle.ViewModels
     public class MainViewModel : ViewModelBase
     {
         private const int ImageSize = 32;
-        private const int MaxBlockCount = 1;
+        private const int MaxBlockCount = 3;
         
         public List<BoardCell> BoardCells => _board.BoardCells;
         
@@ -42,7 +42,7 @@ namespace BlockPuzzle.ViewModels
         private readonly Board _board;
         private readonly BlockGenerator _blockGenerator;
         private readonly ScoreCalculater _scoreCalculater = new();
-        private readonly Bitmap[] _fillTiles = new Bitmap[4];
+        // private readonly Bitmap[] _fillTiles = new Bitmap[4];
         public MainViewModel()
         {
             _board = new Board(Size, MaxBlockCount);
@@ -50,11 +50,6 @@ namespace BlockPuzzle.ViewModels
             
             Blocks.AddRange(_blockGenerator.GenerateBlocks());
             _selectedBlock = Blocks[0];
-            
-            for (var i = 1; i <= MaxBlockCount; i++)
-            {
-                _fillTiles[i] = new Bitmap(AssetLoader.Open(new Uri($"avares://BlockPuzzle/Assets/FillTile{i}.png")));
-            }
         }
 
         public void StartDrag(Block block)
@@ -96,12 +91,8 @@ namespace BlockPuzzle.ViewModels
                 
                 var cellIndex = (rowIndex + cell.X) * Size + columnIndex + cell.Y;
                 if (cellIndex < 0 || cellIndex >= Size * Size) return;
-
-                var boardCell = BoardCells[cellIndex];
-                boardCell.Count++;
-                var image = (boardCellElements[cellIndex] as ContentPresenter)?.Child as Image;
-                if (image != null)
-                    image.Source = _fillTiles[boardCell.Count];
+                
+                BoardCells[cellIndex].Count++;
             }
 
             if (_board.HasRemovableLine())
