@@ -31,6 +31,13 @@ namespace BlockPuzzle.ViewModels
 
         public long Score => _scoreCalculater.Score;
         
+        private bool _isGameOver = false;
+        public bool IsGameOver
+        {
+            get => _isGameOver;
+            private set => this.RaiseAndSetIfChanged(ref _isGameOver, value);
+        }
+        
         private const int Size = 8;
         private readonly Board _board;
         private readonly BlockGenerator _blockGenerator = new();
@@ -112,6 +119,18 @@ namespace BlockPuzzle.ViewModels
             {
                 Blocks.Clear();
                 Blocks.AddRange(_blockGenerator.GenerateBlocks());
+            }
+            else
+            {
+                IsGameOver = Blocks.All(b => b.IsUsed || !_board.CanPlaceBlock(b));
+                if (IsGameOver)
+                {
+                    Console.WriteLine("Game Over!");
+                }
+                else
+                {
+                    Console.WriteLine("Next Turn!");
+                }
             }
         }
     }

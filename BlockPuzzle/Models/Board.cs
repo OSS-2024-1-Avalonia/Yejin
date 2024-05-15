@@ -94,4 +94,42 @@ public class Board
             
         return lines;
     }
+    
+    public bool CanPlaceBlock(Block block)
+    {
+        for (var i = 0; i < _size; i++)
+        {
+            for (var j = 0; j < _size; j++)
+            {
+                if (BoardCells[i * _size + j].Count >= _maxBlockCount) continue;
+                
+                if (CanPlaceBlock(block, i, j)) return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    private bool CanPlaceBlock(Block block, int x, int y)
+    {
+        for (var i = 0; i < block.Size; i++)
+        {
+            for (var j = 0; j < block.Size; j++)
+            {
+                if (!block.Cells[i * block.Size + j].IsVisible) continue;
+                
+                if (x + i >= _size || y + j >= _size)
+                {
+                    return false;
+                }
+                    
+                if (BoardCells[(x + i) * _size + y + j].Count >= _maxBlockCount)
+                {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    }
 }
