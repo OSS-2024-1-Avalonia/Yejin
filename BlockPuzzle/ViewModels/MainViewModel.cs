@@ -6,9 +6,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.Presenters;
-using Avalonia.Media.Imaging;
-using Avalonia.Platform;
 using DynamicData;
 
 namespace BlockPuzzle.ViewModels
@@ -42,7 +39,7 @@ namespace BlockPuzzle.ViewModels
         private readonly Board _board;
         private readonly BlockGenerator _blockGenerator;
         private readonly ScoreCalculater _scoreCalculater = new();
-        // private readonly Bitmap[] _fillTiles = new Bitmap[4];
+
         public MainViewModel()
         {
             _board = new Board(Size, MaxBlockCount);
