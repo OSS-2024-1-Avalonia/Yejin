@@ -100,7 +100,7 @@ namespace BlockPuzzle.ViewModels
                 
                 var lineCount = _board.RemoveLines(boardCellElements);
                 _scoreCalculater.AddScore(lineCount);
-                this.RaisePropertyChanged("Score");
+                this.RaisePropertyChanged(nameof(Score));
             }
             else
             {
