@@ -5,6 +5,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:BlockPuzzle.ViewModels"
+    xmlns:cv="clr-namespace:BlockPuzzle.Converter"
+    xmlns:model="clr-namespace:BlockPuzzle.Models"
     d:DesignHeight="900"
     d:DesignWidth="500"
     x:DataType="vm:MainViewModel"
@@ -69,7 +71,12 @@
                                         Height="32"
                                         Margin="1"
                                         IsVisible="{CompiledBinding IsVisible}"
-                                        Source="avares://BlockPuzzle/Assets/Block.png" />
+                                        Source="{Binding ((model:Block)DataContext).IsUsed, 
+                                                        RelativeSource={RelativeSource Mode=FindAncestor, 
+                                                        AncestorType={x:Type ItemsControl}},
+                                                        Converter={x:Static cv:BlockImageConverter.Instance},
+                                                        Mode=OneWay
+                                                }" />
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
 

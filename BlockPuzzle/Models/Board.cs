@@ -44,7 +44,7 @@ public class Board
         return FindRemoveLine().Any();
     }
     
-    public int RemoveLines(Controls boardElements)
+    public int RemoveLines(Avalonia.Controls.Controls boardElements)
     {
         var lines = FindRemoveLine();
         
