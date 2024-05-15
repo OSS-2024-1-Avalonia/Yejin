@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Avalonia.Controls;
-using Avalonia.Controls.Presenters;
-using Avalonia.Media.Imaging;
-using Avalonia.Platform;
 
 namespace BlockPuzzle.Models;
 
@@ -50,7 +46,7 @@ public class Board
             for (var i = 0; i < _size; i++)
             {
                 var cellIndex = (line.IsHorizontal) ? line.Index * _size + i : i * _size + line.Index;
-                BoardCells[cellIndex].Count = 0;
+                BoardCells[cellIndex].Count -= 1;
             }
         }
 
