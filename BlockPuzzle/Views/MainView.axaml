@@ -17,8 +17,7 @@
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             RowDefinitions="*,*,*,10"
-            DragDrop.AllowDrop="True"
-            Background="DodgerBlue">
+            DragDrop.AllowDrop="True">
 
             <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
                 <TextBlock Margin="10" Text="{CompiledBinding Score}" FontSize="30" FontWeight="Heavy" />
@@ -26,7 +25,7 @@
                 <!-- <TextBlock Margin="10" Text="Before Score" /> -->
             </StackPanel>
 
-            <Grid Grid.Row="1" Name="Board" Margin="0" Background="Chocolate">
+            <Grid Grid.Row="1" Name="Board" Margin="0">
                 <ItemsControl ItemsSource="{CompiledBinding BoardCells}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
@@ -47,8 +46,7 @@
                             <UniformGrid
                                 Width="264"
                                 Margin="0 10 0 10"
-                                Columns="8"
-                                Background="Chartreuse" />
+                                Columns="8" />
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
                 </ItemsControl>
@@ -122,8 +120,8 @@
                 </ItemsControl>
             </Canvas>
         </Grid>
-        <Panel Background="DarkBlue" IsVisible="{CompiledBinding IsGameOver}">
-            <TextBlock Text="Game Over!" 
+        <Panel Background="Black" IsVisible="{CompiledBinding IsGameOver}">
+            <TextBlock Text="Game Over!"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"
                        FontSize="60"
