@@ -61,11 +61,14 @@ namespace BlockPuzzle.ViewModels
             var columnIndex = (int) Math.Round(selectedPoint.X / ImageSize);
             var rowIndex = (int) Math.Round(selectedPoint.Y / ImageSize);
             
+            if (columnIndex < 0 || rowIndex < 0) return false;
+            
             foreach (var cell in block.Cells)
             { 
                 if (cell.IsVisible == false) continue;
                 
                 var cellIndex = (rowIndex + cell.X) * Size + columnIndex + cell.Y;
+                if (rowIndex + cell.X >= Size || columnIndex + cell.Y >= Size) return false;
                 if (cellIndex < 0 || cellIndex >= Size * Size) return false;
                 if (BoardCells[cellIndex].Count >= MaxBlockCount) return false;
             }
