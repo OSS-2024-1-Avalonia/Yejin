@@ -22,7 +22,6 @@ public class BoardImageConverter : IValueConverter
     
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        Console.WriteLine(value);
         return _fillTiles[(int)value];
     }
 
