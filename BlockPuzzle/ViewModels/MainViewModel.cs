@@ -26,7 +26,13 @@ namespace BlockPuzzle.ViewModels
             private set => this.RaiseAndSetIfChanged(ref _selectedBlock, value);
         }
 
-        public long Score => _scoreCalculater.Score;
+        private long _score;
+        public long Score
+        {
+            get => _score;
+            private set => this.RaiseAndSetIfChanged(ref _score, value);
+        }
+        private bool _isCombo;
         
         private bool _isGameOver = false;
         public bool IsGameOver
@@ -79,8 +85,7 @@ namespace BlockPuzzle.ViewModels
         public void Drop(Block block, Point selectedPoint, Panel? board)
         {
             if (board == null) return;
-            
-            // TODO: 영역 벗어나도 블록 놔지는 버그 수정해야 함
+
             var columnIndex = (int) Math.Round(selectedPoint.X / ImageSize);
             var rowIndex = (int) Math.Round(selectedPoint.Y / ImageSize);
             
@@ -99,12 +104,12 @@ namespace BlockPuzzle.ViewModels
             {
                 
                 var lineCount = _board.RemoveLines(boardCellElements);
-                _scoreCalculater.AddScore(lineCount);
-                this.RaisePropertyChanged(nameof(Score));
+                Score += _scoreCalculater.Calculate(_isCombo);
+                _isCombo = true;
             }
             else
             {
-                _scoreCalculater.IsCombo = false;
+                _isCombo = false;
             }
             
             Blocks[block.Id].IsUsed = true;
@@ -115,14 +120,6 @@ namespace BlockPuzzle.ViewModels
             }
             
             IsGameOver = Blocks.All(b => b.IsUsed || !_board.CanPlaceBlock(b));
-            if (IsGameOver)
-            {
-                Console.WriteLine("Game Over!");
-            }
-            else
-            {
-                Console.WriteLine("Next Turn!");
-            }
         }
     }
 }

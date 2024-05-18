@@ -5,20 +5,14 @@ namespace BlockPuzzle.Models;
 public class ScoreCalculater
 {
     private const int DefaultScore = 10;
-
-    private long _score;
-    public long Score => _score;
-
-    public bool IsCombo { get; set; }
     
-    public void AddScore(int weight = 1)
+    public long Calculate(bool isCombo, int weight = 1)
     {
-        if (IsCombo)
+        if (isCombo)
         {
             weight *= 2;
         }
 
-        _score += DefaultScore * weight;
-        IsCombo = true;
+        return DefaultScore * weight;
     }
 }
