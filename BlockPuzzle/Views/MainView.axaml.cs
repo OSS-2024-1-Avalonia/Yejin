@@ -14,6 +14,7 @@ namespace BlockPuzzle.Views
     public partial class MainView : UserControl
     {
         private Point _selectedPosition = new(0, 0);
+        private Point _delta = new(0, 0);
 
         public MainView()
         {
@@ -37,7 +38,8 @@ namespace BlockPuzzle.Views
             if (grid.DataContext is not Block block) return;
             if (block.IsUsed) return;
 
-            var selectedPos = SelectedBlockGrid.Bounds.Position;
+            _delta = new Point(block.Size / 2.0 * 32, block.Size / 2.0 * 32);
+            var selectedPos = SelectedBlockGrid.Bounds.Position + _delta;
             _selectedPosition = selectedPos;
 
             var mousePos = e.GetPosition(MainPanel);
@@ -60,10 +62,8 @@ namespace BlockPuzzle.Views
         private void DragOver(object? sender, DragEventArgs e)
         {
             var currentPosition = e.GetPosition(MainPanel);
-
             var offsetX = currentPosition.X - _selectedPosition.X;
             var offsetY = currentPosition.Y - _selectedPosition.Y;
-
             SelectedBlockGrid.RenderTransform = new TranslateTransform(offsetX, offsetY);
             e.DragEffects = DragDropEffects.Move;
 
@@ -74,7 +74,7 @@ namespace BlockPuzzle.Views
             var boardPosition = e.GetPosition(Board);
             if (Board.Children.First() is not ItemsControl itemsControl) return;
             var boardPanel = itemsControl.ItemsPanelRoot;
-            boardPosition -= boardPanel?.Bounds.Position ?? new Point();
+            boardPosition -= boardPanel?.Bounds.Position + _delta ?? new Point();
 
             e.DragEffects = vm.IsDestinationValid(block, boardPosition, boardPanel)
                 ? DragDropEffects.Move
@@ -93,10 +93,11 @@ namespace BlockPuzzle.Views
             var boardPosition = e.GetPosition(Board);
             if (Board.Children.First() is not ItemsControl itemsControl) return;
             var boardPanel = itemsControl.ItemsPanelRoot;
-            boardPosition -= boardPanel?.Bounds.Position ?? new Point();
+            boardPosition -= boardPanel?.Bounds.Position + _delta ?? new Point();
 
             if (vm.IsDestinationValid(block, boardPosition, boardPanel))
                 vm.Drop(block, boardPosition, boardPanel);
+            SelectedBlockGrid.RenderTransform = new TranslateTransform(0, 0);
         }
     }
 }
