@@ -122,4 +122,12 @@ public class Board
         
         return true;
     }
+
+    public void Reset()
+    {
+        foreach (var cell in BoardCells)
+        {
+            cell.Count = 0;
+        }
+    }
 }

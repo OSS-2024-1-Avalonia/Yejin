@@ -4,6 +4,7 @@ using ReactiveUI;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reactive;
 using Avalonia;
 using Avalonia.Controls;
 using DynamicData;
@@ -16,9 +17,9 @@ namespace BlockPuzzle.ViewModels
         private const int MaxBlockCount = 3;
         
         public List<BoardCell> BoardCells => _board.BoardCells;
-        
         public ObservableCollection<Block> Blocks { get; } = new();
-
+        public ReactiveCommand<Unit, Unit> ResetCommand { get; }
+        
         private Block _selectedBlock;
         public Block SelectedBlock
         {
@@ -53,6 +54,7 @@ namespace BlockPuzzle.ViewModels
             
             Blocks.AddRange(_blockGenerator.GenerateBlocks());
             _selectedBlock = Blocks[0];
+            ResetCommand = ReactiveCommand.Create(Reset);
         }
 
         public void StartDrag(Block block)
@@ -120,6 +122,15 @@ namespace BlockPuzzle.ViewModels
             }
             
             IsGameOver = Blocks.All(b => b.IsUsed || !_board.CanPlaceBlock(b));
+        }
+
+        private void Reset()
+        {
+            _board.Reset();
+            Score = 0;
+            IsGameOver = false;
+            Blocks.Clear();
+            Blocks.AddRange(_blockGenerator.GenerateBlocks());
         }
     }
 }

@@ -119,13 +119,25 @@
                 </ItemsControl>
             </Canvas>
         </Grid>
-        <Panel Background="Black" IsVisible="{CompiledBinding IsGameOver}">
-            <TextBlock Text="Game Over!"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"
-                       FontSize="60"
-                       FontWeight="Black"
-                       Foreground="Red"/>
+        <Panel 
+            Background="Black" 
+            IsVisible="{CompiledBinding IsGameOver}">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <TextBlock Text="Game Over!"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontSize="60"
+                           FontWeight="Black"
+                           Foreground="Red"/>
+                <Button Margin="20"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"
+                        Command="{CompiledBinding ResetCommand}">
+                    <TextBlock Text="RETRY" 
+                               FontSize="25"
+                               Foreground="White"/>
+                </Button>
+            </StackPanel>
         </Panel>
     </Panel>
 
