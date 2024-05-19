@@ -1,0 +1,144 @@
+<UserControl
+    x:Class="BlockPuzzle.Views.GameView"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="clr-namespace:BlockPuzzle.ViewModels"
+    xmlns:cv="clr-namespace:BlockPuzzle.Converter"
+    xmlns:model="clr-namespace:BlockPuzzle.Models"
+    d:DesignHeight="900"
+    d:DesignWidth="500"
+    x:DataType="vm:GameViewModel"
+    mc:Ignorable="d">
+    <Panel>
+        <Grid
+            Name="MainPanel"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            RowDefinitions="*,*,*,10"
+            DragDrop.AllowDrop="True">
+
+            <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center">
+                <TextBlock Margin="10" Text="{CompiledBinding Score}" FontSize="30" FontWeight="Heavy" />
+                <!-- <TextBlock Margin="10" Text="Icon" /> -->
+                <!-- <TextBlock Margin="10" Text="Before Score" /> -->
+            </StackPanel>
+
+            <Grid Grid.Row="1" Name="Board" Margin="0" Background="Transparent">
+                <ItemsControl ItemsSource="{CompiledBinding BoardCells}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Image
+                                Grid.Row="{CompiledBinding X}"
+                                Grid.Column="{CompiledBinding Y}"
+                                Width="32"
+                                Height="32"
+                                Margin="1"
+                                Source="{Binding Count,
+                                                Converter={x:Static cv:BoardImageConverter.Instance},
+                                                Mode=OneWay}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid
+                                Width="264"
+                                Margin="0 10 0 10"
+                                Columns="8" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </Grid>
+
+            <Grid Grid.Row="2">
+                <ItemsControl ItemsSource="{CompiledBinding Blocks}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <ItemsControl ItemsSource="{CompiledBinding Cells}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Image
+                                            Grid.Row="{CompiledBinding X}"
+                                            Grid.Column="{CompiledBinding Y}"
+                                            Width="32"
+                                            Height="32"
+                                            Margin="1"
+                                            IsVisible="{CompiledBinding IsVisible}"
+                                            Source="{Binding ((model:Block)DataContext).IsUsed, 
+                                                        RelativeSource={RelativeSource Mode=FindAncestor, 
+                                                        AncestorType={x:Type ItemsControl}},
+                                                        Converter={x:Static cv:BlockImageConverter.Instance},
+                                                        Mode=OneWay}" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <UniformGrid
+                                            Margin="10"
+                                            Columns="{CompiledBinding Size}"
+                                            PointerPressed="OnPointerPressed" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                            </ItemsControl>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
+
+
+            <Canvas Name="SelectedBlockGrid" Grid.Row="3">
+                <ItemsControl ItemsSource="{CompiledBinding SelectedBlock.Cells}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid
+                                Columns="{CompiledBinding $parent.((vm:GameViewModel)DataContext).SelectedBlock.Size}" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Image
+                                Grid.Row="{CompiledBinding X}"
+                                Grid.Column="{CompiledBinding Y}"
+                                Width="32"
+                                Height="32"
+                                Margin="1"
+                                IsVisible="{CompiledBinding IsVisible}"
+                                Source="avares://BlockPuzzle/Assets/Block.png" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Canvas>
+        </Grid>
+        <Panel 
+            Background="Black" 
+            IsVisible="{CompiledBinding IsGameOver}">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <TextBlock Text="Game Over!"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontSize="60"
+                           FontWeight="Black"
+                           Foreground="Red"/>
+                <Button Margin="20"
+                        HorizontalAlignment="Stretch"
+                        HorizontalContentAlignment="Center"
+                        Command="{CompiledBinding ResetCommand}">
+                    <TextBlock Text="RETRY" 
+                               FontSize="25"
+                               Foreground="White"/>
+                </Button>
+            </StackPanel>
+        </Panel>
+    </Panel>
+
+</UserControl>

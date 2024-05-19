@@ -4,9 +4,9 @@ using Avalonia.Markup.Xaml;
 
 namespace BlockPuzzle.Views;
 
-public partial class MainView : UserControl
+public partial class LobbyView : UserControl
 {
-    public MainView()
+    public LobbyView()
     {
         InitializeComponent();
     }
