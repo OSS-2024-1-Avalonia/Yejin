@@ -7,10 +7,6 @@
              x:Class="BlockPuzzle.Views.LobbyView"
              x:DataType="vm:LobbyViewModel">
     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-        <Button Content="Login with Google"
-                Width="200"
-                Height="50"
-                Command="{CompiledBinding LoginGoogleCommand}"/>
         <Button Content="Load Game"
                 Width="200"
                 Height="50"

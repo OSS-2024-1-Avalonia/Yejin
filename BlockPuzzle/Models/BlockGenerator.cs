@@ -90,7 +90,8 @@ namespace BlockPuzzle.Models
             var maxRow = indices.Select(i => _blocks[i].Size).Max();
             for (var i = 0; i < 3; i++)
             {
-                var block = _blocks[indices[i]].Clone() as Block;
+                if (_blocks[indices[i]].Clone() is not Block block) continue;
+                
                 block.Id = i;
                 block.IsUsed = false;
                 ModifyRow(maxRow, ref block);
